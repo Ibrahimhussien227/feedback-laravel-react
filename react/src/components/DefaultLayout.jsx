@@ -7,10 +7,6 @@ import axiosClient from "../axios-client";
 const DefaultLayout = () => {
   const { user, token, setUser, setToken } = useStateContext();
 
-  if (!token) {
-    return <Navigate to="/login" />;
-  }
-
   const onLogout = (e) => {
     e.preventDefault();
 
@@ -24,12 +20,15 @@ const DefaultLayout = () => {
     axiosClient.get("/user").then(({ data }) => setUser(data));
   }, []);
 
+  if (!token) {
+    return <Navigate to="/login" />;
+  }
+  // if (user.role === 1) {
+  //   return <Navigate to="/admin/users" />;
+  // }
+
   return (
     <div id="defaultLayout">
-      <aside>
-        <Link to="/dashboard">Dashboard</Link>
-        <Link to="/users">Users</Link>
-      </aside>
       <div className="content">
         <header>
           <h1>Header</h1>
