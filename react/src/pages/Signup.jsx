@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { createRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { useStateContext } from "../contexts/ContextProvider";
@@ -6,12 +6,13 @@ import axiosClient from "../axios-client";
 
 const Signup = () => {
   // Used useRef not useState because i don't need my page to rendering on everyChange
-  const nameRef = useRef();
-  const emailRef = useRef();
-  const passwordRef = useRef();
-  const passwrodConfirmationRef = useRef();
+  const nameRef = createRef();
+  const emailRef = createRef();
+  const passwordRef = createRef();
+  const passwrodConfirmationRef = createRef();
+  const [errors, setErrors] = useState(null);
 
-  const { setUser, setToken } = useStateContext;
+  const { setUser, setToken } = useStateContext();
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -34,6 +35,7 @@ const Signup = () => {
 
         if (response && response.status === 422) {
           console.log(response.data.errors);
+          setErrors(response.data.errors);
         }
       });
   };
@@ -43,7 +45,13 @@ const Signup = () => {
       <div className="form">
         <form onSubmit={onSubmit}>
           <h1 className="title">Signup for free</h1>
-          {/* <label htmlFor="email">Email</label> */}
+          {errors && (
+            <div className="alert">
+              {Object.keys(errors).map((key) => (
+                <p key={key}>{errors[key][0]}</p>
+              ))}
+            </div>
+          )}
           <input ref={nameRef} placeholder="Full Name" />
           <input ref={emailRef} type="email" placeholder="Email Address" />
           <input ref={passwordRef} type="password" placeholder="Password" />

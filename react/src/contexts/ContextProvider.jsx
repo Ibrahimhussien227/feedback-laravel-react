@@ -12,7 +12,7 @@ export const ContextProvider = ({ children }) => {
     name: "Joe",
   });
   // I couldn't name it setToken because i have function name setToken
-  const [token, _setToken] = useState(null);
+  const [token, _setToken] = useState(localStorage.getItem("ACCESS_TOKEN"));
 
   const setToken = (token) => {
     _setToken(token);
