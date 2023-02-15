@@ -8,9 +8,7 @@ const StateContext = createContext({
 });
 
 export const ContextProvider = ({ children }) => {
-  const [user, setUser] = useState({
-    name: "Joe",
-  });
+  const [user, setUser] = useState({});
   // I couldn't name it setToken because i have function name setToken
   const [token, _setToken] = useState(localStorage.getItem("ACCESS_TOKEN"));
 
