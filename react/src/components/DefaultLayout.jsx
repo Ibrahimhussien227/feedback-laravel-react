@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Link, Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
 import { useStateContext } from "../contexts/ContextProvider";
 import axiosClient from "../axios-client";
@@ -23,9 +23,6 @@ const DefaultLayout = () => {
   if (!token) {
     return <Navigate to="/login" />;
   }
-  // if (user.role === 1) {
-  //   return <Navigate to="/admin/users" />;
-  // }
 
   return (
     <div id="defaultLayout">
