@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\FeedbackController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(["auth:sanctum", "isAdmin"])->group(function () {
     Route::apiResource("/admin/users", UserController::class);
+    Route::get("/feedback", [FeedbackController::class, "index"]);
+    Route::get("/download/{id}", [FeedbackController::class, "download"]);
 });
 
 Route::middleware("auth:sanctum")->group(function () {
@@ -25,8 +28,7 @@ Route::middleware("auth:sanctum")->group(function () {
         return $request->user();
     });
     Route::post("/logout", [AuthController::class, "logout"]);
-    // Route::apiResource("/admin/users", UserController::class);
+    Route::post("/feedback/create", [FeedbackController::class, "store"]);
 });
-
 Route::post("/signup", [AuthController::class, "signup"]);
 Route::post("/login", [AuthController::class, "login"]);
