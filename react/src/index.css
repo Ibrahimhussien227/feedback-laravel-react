@@ -72,7 +72,7 @@ textarea {
 }
 
 .btn-block {
-  width: 20%;
+  width: 100%;
 }
 
 .btn-add,
@@ -206,7 +206,7 @@ table > tbody > tr > td {
 
 .feedback-form .form {
   width: 70%;
-  height: 60%;
+  height: 80%;
   position: relative;
   z-index: 1;
   background: #ffffff;
@@ -232,7 +232,18 @@ textarea {
   width: 60%;
 }
 
+.btn-form {
+  width: 30%;
+}
+
 /* Login/Signup form */
+
+.loader {
+  height: 81vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 #defaultLayout {
   display: flex;
