@@ -1,6 +1,6 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
-import { Login, Signup, Users, NotFound, Dashboard } from "./pages";
+import { Login, Signup, Feedbacks, NotFound, Dashboard } from "./pages";
 import { DefaultLayout, GuestLayout } from "./components";
 
 const router = createBrowserRouter([
@@ -17,8 +17,8 @@ const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
-        path: "/admin/users",
-        element: <Users />,
+        path: "/admin/feedback",
+        element: <Feedbacks />,
       },
     ],
   },
