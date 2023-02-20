@@ -10,6 +10,7 @@ use App\Jobs\SendEmailJob;
 use App\Models\Feedback;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class FeedbackController extends Controller
 {
@@ -20,11 +21,39 @@ class FeedbackController extends Controller
      */
     public function index()
     {
-        return FeedbackResource::collection(
-            Feedback::query()
-                ->orderBy("id", "DESC")
-                ->get()
-        );
+        try {
+            $feedback = Cache::remember(
+                "feedback",
+                now()->addMinute(150),
+                function () {
+                    return FeedbackResource::collection(
+                        Feedback::query()
+                            ->orderBy("id", "DESC")
+                            ->get()
+                    );
+                }
+            );
+
+            if ($feedback) {
+                return response()->json([
+                    "message" => "Succeed!",
+                    "content" => [
+                        "feedback" => $feedback,
+                    ],
+                    "code" => 200,
+                ]);
+            } else {
+                return response()->json([
+                    "message" => "Failed No data",
+                    "code" => 401,
+                ]);
+            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                "message" => $th,
+                "code" => 501,
+            ]);
+        }
     }
 
     /**
