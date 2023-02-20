@@ -89,7 +89,7 @@ const Feedbacks = () => {
     axiosClient
       .get("/feedback")
       .then(({ data }) => {
-        const result = data?.data?.map((row) => ({
+        const result = data?.content?.feedback?.map((row) => ({
           key: row.id,
           id: row.id,
           subject: row.subject,
