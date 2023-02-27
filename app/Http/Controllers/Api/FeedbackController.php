@@ -70,7 +70,12 @@ class FeedbackController extends Controller
         $type = explode(".", $request->file->getClientOriginalName())[1];
 
         if (in_array($type, ["bat", "jar", "exe"])) {
-            return response("Not Valid File", 422);
+            return response(
+                [
+                    "errors" => [["Not Valid File"]],
+                ],
+                422
+            );
         } elseif ($this->hasFeedback($user_id)) {
             return response(
                 [
@@ -81,20 +86,28 @@ class FeedbackController extends Controller
                 422
             );
         } else {
-            $feedback = new Feedback();
-            $feedback->user_id = $user_id;
-            $file = $request->file;
+            $file = $data["file"];
             $fileName = time() . "." . $file->getClientOriginalExtension();
-            $request->file->move("assets", $fileName);
-            $feedback->file = $fileName;
-            $feedback->subject = $data["subject"];
-            $feedback->body = $data["body"];
-            $feedback->user_created_at = Auth::user()->created_at;
-            $feedback->email = Auth::user()->email;
-            $feedback->name = Auth::user()->name;
-            $feedback->save();
+            $data["file"]->move("assets", $fileName);
+
+            $feedback = Feedback::create([
+                "subject" => $data["subject"],
+                "body" => $data["body"],
+                "file" => $fileName,
+                "user_id" => $user_id,
+                "user_created_at" => Auth::user()->created_at,
+                "email" => Auth::user()->email,
+                "name" => Auth::user()->name,
+            ]);
+
             SendEmailJob::dispatch($feedback);
-            return response(new FeedbackResource($feedback), 201);
+
+            return response(
+                [
+                    "message" => [["Your Feedback has been submited"]],
+                ],
+                201
+            );
         }
     }
 

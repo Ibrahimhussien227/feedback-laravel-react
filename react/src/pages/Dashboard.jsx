@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
 
 import { useStateContext } from "../contexts/ContextProvider";
@@ -14,7 +14,7 @@ const Dashboard = () => {
     file: "",
   });
   const [errors, setErrors] = useState(null);
-  const ref = useRef();
+  const [successMessage, setSuccessMessage] = useState(null);
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -25,12 +25,14 @@ const Dashboard = () => {
           "Content-Type": "multipart/form-data",
         },
       })
-      .then(() => {
+      .then((res) => {
         setRequest({ subject: "", body: "", file: "" });
-        ref.current.value = "";
         setLoading(false);
+        setErrors(null);
+        setSuccessMessage(res.data.message);
       })
       .catch((err) => {
+        setSuccessMessage(null);
         setLoading(false);
         const { response } = err;
         if (response && response.status === 422) {
@@ -57,6 +59,7 @@ const Dashboard = () => {
               ))}
             </div>
           )}
+          {successMessage && <div className="success">{successMessage}</div>}
           <input
             value={request.subject}
             onChange={(e) =>
@@ -71,12 +74,16 @@ const Dashboard = () => {
             placeholder="Enter your feedback"
           />
           <input
-            ref={ref}
             onChange={(e) =>
               setRequest({ ...request, file: e.target.files[0] })
             }
             type="file"
+            id="file"
+            style={{ display: "none" }}
           />
+          <label htmlFor="file">
+            {!request.file ? "Select file" : request.file.name}
+          </label>
           <button className="btn btn-form" type="submit">
             Submit
           </button>

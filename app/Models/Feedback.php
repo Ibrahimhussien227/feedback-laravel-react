@@ -14,7 +14,15 @@ class Feedback extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ["subject", "body", "file", "user_id"];
+    protected $fillable = [
+        "subject",
+        "body",
+        "file",
+        "user_id",
+        "user_created_at",
+        "email",
+        "name",
+    ];
 
     public function User()
     {
