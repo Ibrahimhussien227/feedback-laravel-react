@@ -34,9 +34,21 @@ class FeedbackMailer extends Mailable
     /**
      * Get the message content definition.
      */
-    public function content(): Content
+    // public function content(): Content
+    // {
+    //     return new Content(view: "mailcontent");
+    // }
+
+    /**
+     * Build the message.
+     *
+     * @return $this
+     */
+    public function build()
     {
-        return new Content(view: "mailcontent");
+        return $this->view("mailcontent")->attachFromStorage(
+            "assets/" . $this->feedback->file
+        );
     }
 
     /**

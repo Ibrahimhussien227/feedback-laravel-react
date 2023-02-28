@@ -11,6 +11,7 @@ use App\Models\Feedback;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class FeedbackController extends Controller
 {
@@ -84,7 +85,7 @@ class FeedbackController extends Controller
         } else {
             $file = $data["file"];
             $fileName = time() . "." . $file->getClientOriginalExtension();
-            $data["file"]->move("assets", $fileName);
+            $path = Storage::putFileAs("assets", $file, $fileName);
 
             $feedback = Feedback::create([
                 "subject" => $data["subject"],
@@ -121,8 +122,7 @@ class FeedbackController extends Controller
 
     public function download(Request $request, $file)
     {
-        $file_path = public_path("assets/" . $file);
-        return response()->download($file_path);
+        return Storage::download("assets/" . $file);
     }
 
     /**
