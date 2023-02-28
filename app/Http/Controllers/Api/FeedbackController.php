@@ -22,17 +22,13 @@ class FeedbackController extends Controller
     public function index()
     {
         try {
-            $feedback = Cache::remember(
-                "feedback",
-                now()->addMinute(150),
-                function () {
-                    return FeedbackResource::collection(
-                        Feedback::query()
-                            ->orderBy("id", "DESC")
-                            ->get()
-                    );
-                }
-            );
+            $feedback = Cache::remember("feedback", now(), function () {
+                return FeedbackResource::collection(
+                    Feedback::query()
+                        ->orderBy("id", "DESC")
+                        ->get()
+                );
+            });
 
             if ($feedback) {
                 return response()->json([
@@ -69,46 +65,46 @@ class FeedbackController extends Controller
         $user_id = Auth::user()->id;
         $type = explode(".", $request->file->getClientOriginalName())[1];
 
-        if (in_array($type, ["bat", "jar", "exe"])) {
-            return response(
-                [
-                    "errors" => [["Not Valid File"]],
-                ],
-                422
-            );
-        } elseif ($this->hasFeedback($user_id)) {
-            return response(
-                [
-                    "errors" => [
-                        ["You send feedback more than once every 24 hours"],
-                    ],
-                ],
-                422
-            );
-        } else {
-            $file = $data["file"];
-            $fileName = time() . "." . $file->getClientOriginalExtension();
-            $data["file"]->move("assets", $fileName);
+        // if (in_array($type, ["bat", "jar", "exe"])) {
+        //     return response(
+        //         [
+        //             "errors" => [["Not Valid File"]],
+        //         ],
+        //         422
+        //     );
+        // } elseif ($this->hasFeedback($user_id)) {
+        //     return response(
+        //         [
+        //             "errors" => [
+        //                 ["You send feedback more than once every 24 hours"],
+        //             ],
+        //         ],
+        //         422
+        //     );
+        // } else {
+        $file = $data["file"];
+        $fileName = time() . "." . $file->getClientOriginalExtension();
+        $data["file"]->move("assets", $fileName);
 
-            $feedback = Feedback::create([
-                "subject" => $data["subject"],
-                "body" => $data["body"],
-                "file" => $fileName,
-                "user_id" => $user_id,
-                "user_created_at" => Auth::user()->created_at,
-                "email" => Auth::user()->email,
-                "name" => Auth::user()->name,
-            ]);
+        $feedback = Feedback::create([
+            "subject" => $data["subject"],
+            "body" => $data["body"],
+            "file" => $fileName,
+            "user_id" => $user_id,
+            "user_created_at" => Auth::user()->created_at,
+            "email" => Auth::user()->email,
+            "name" => Auth::user()->name,
+        ]);
 
-            SendEmailJob::dispatch($feedback);
+        SendEmailJob::dispatch($feedback);
 
-            return response(
-                [
-                    "message" => [["Your Feedback has been submited"]],
-                ],
-                201
-            );
-        }
+        return response(
+            [
+                "message" => [["Your Feedback has been submited"]],
+            ],
+            201
+        );
+        // }
     }
 
     /**
